@@ -1,6 +1,6 @@
-namespace DomainTypes
+namespace OrderTracking
 
-module rec BusinessLogic =
+module rec Domain =
   type Result<'Success, 'Failure> =
     | OK  of 'Success
     | Error of 'Failure
