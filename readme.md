@@ -1,0 +1,1 @@
+- book 참조 : domain modeling make functional
