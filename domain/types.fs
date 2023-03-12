@@ -4,11 +4,12 @@ module rec Domain =
   type Result<'Success, 'Failure> =
     | OK  of 'Success
     | Error of 'Failure
+
+  type WidgetCode = WidgetCode of string
+  type GizmoCode = GizmoCode of string
   type ProductCode =
     | Widget of WidgetCode 
     | Gizmo of GizmoCode
-  type WidgetCode = WidgetCode of string
-  type GizmoCode = GizmoCode of string
   type OrderQuantity =
     | Unit of UnitQuantity
     | Kilogram of KilogramQuantity
