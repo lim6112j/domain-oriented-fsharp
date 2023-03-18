@@ -79,12 +79,19 @@ type ValidateOrder =
 type ContactId = ContactId of int
 type PhoneNumber = PhoneNumber of string
 type EmailAddress = EmailAddress of string
-
+type BothContactMethods = {
+  email: EmailAddress
+  phone: PhoneNumber
+}
+// business rule, email only, phone only, or both
+type ContactInfo =
+  | EmailOnly of EmailAddress
+  | PhoneOnly of PhoneNumber
+  | EmailAndAddr of BothContactMethods
 [<CustomEquality; NoComparison>]
 type Contact = {
   ContactId : ContactId
-  PhoneNumber : PhoneNumber
-  EmailAddress : EmailAddress
+  ContactInfo: ContactInfo
 } with
 override this.Equals(obj) =
   match obj with

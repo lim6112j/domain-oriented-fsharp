@@ -11,20 +11,24 @@ module Program =
   processCustomerId(customerId)
   //printfn "customer id = order id : %b" (customerId = orderId)
   let contactId = ContactId 1
+  let contactInfo = PhoneOnly (PhoneNumber "2222")
   let contact1 = 
     {
       ContactId=contactId
-      PhoneNumber = PhoneNumber "111-111-1111"
-      EmailAddress = EmailAddress "sd@hkjl.com"
+      ContactInfo=contactInfo
+    }
+
+  let contactInfo2 = EmailAndAddr{
+    phone=PhoneNumber("111")
+    email=EmailAddress("lll")
     }
   let contact2 = 
     {
       ContactId=contactId
-      PhoneNumber = PhoneNumber "111-111-1111"
-      EmailAddress = EmailAddress "sd@hkjl.com"
+      ContactInfo=contactInfo2
     }
   printfn "compaing 2 contact : %b" (contact1 = contact2)
-  let initialContact = {ContactId=ContactId 42; PhoneNumber=PhoneNumber "111-0111-111"; EmailAddress=EmailAddress "ddd@ddd.com"}
+  let initialContact = {ContactId=ContactId 42; ContactInfo=contactInfo};
   let updatedContact = {initialContact with ContactId = ContactId 41}
   printfn "initial : %A,\nupdated: %A" initialContact updatedContact
   let unitQ = UnitQuantity.create 1
