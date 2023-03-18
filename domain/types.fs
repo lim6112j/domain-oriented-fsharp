@@ -1,16 +1,33 @@
 namespace OrderTracking.Domain
 
+[<Measure>]
+type kg
+[<Measure>]
+type m
 type Result<'Success, 'Failure> =
   | OK  of 'Success
   | Error of 'Failure
-
+type UnitQuantity = private UnitQuantity of int
+module UnitQuantity =
+  let create qty : Result<UnitQuantity, string>=
+    if qty < 1 then
+      Error "UnitQuantity can not be negative"
+    else if qty > 1000 then
+      Error "UnitQuantity can not be more than 1000"
+    else 
+      OK (UnitQuantity qty)
+  // return wrapped value
+  let value (UnitQuantity qty) = qty
+type NonEmptyList<'a> = {
+  First: 'a
+  Rest: 'a list
+}
 type WidgetCode = WidgetCode of string
 type GizmoCode = GizmoCode of string
 type ProductCode =
   | Widget of WidgetCode 
   | Gizmo of GizmoCode
-type UnitQuantity = private UnitQuantity of int
-type KilogramQuantity = KilogramQuantity of decimal
+type KilogramQuantity = KilogramQuantity of decimal<kg>
 type OrderQuantity =
   | Unit of UnitQuantity
   | Kilogram of KilogramQuantity
@@ -27,7 +44,7 @@ type Order = {
     CustomerInfo : CustomerInfo
     ShippingAddress : ShippingAddress
     BillingAddress : BillingAddress
-    OrderLines : OrderLine list
+    OrderLines : NonEmptyList<OrderLine> // non empty list
     AmountToBill : BillingAmount
 }
 type UnvalidatedOrder = Undefined
@@ -76,13 +93,3 @@ override this.Equals(obj) =
 override this.GetHashCode() =
   hash this.ContactId
 end
-module UnitQuantity =
-  let create qty : Result<UnitQuantity, string>=
-    if qty < 1 then
-      Error "UnitQuantity can not be negative"
-    else if qty > 1000 then
-      Error "UnitQuantity can not be more than 1000"
-    else 
-      OK (UnitQuantity qty)
-  // return wrapped value
-  let value (UnitQuantity qty) = qty

@@ -27,8 +27,8 @@ module Program =
   let initialContact = {ContactId=ContactId 42; PhoneNumber=PhoneNumber "111-0111-111"; EmailAddress=EmailAddress "ddd@ddd.com"}
   let updatedContact = {initialContact with ContactId = ContactId 41}
   printfn "initial : %A,\nupdated: %A" initialContact updatedContact
-  let unitQ = UnitQuantity.create(1) 
-  let unitQError = UnitQuantity.create(1001) 
+  let unitQ = UnitQuantity.create 1
+  let unitQError = UnitQuantity.create 1001 
   match unitQ with
   | Error msg -> printfn "Failure, Message is %s" msg
   | OK uQty -> 
