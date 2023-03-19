@@ -47,6 +47,10 @@ module Program =
     let innervalue = UnitQuantity.value uQty
     printfn "innervalue is %i" innervalue
 
+  let cart = EmptyCart
+  let item = Item "item"
+  let cartUpdated = Methods.addItem cart item
+  printfn "cart added item : %A" cartUpdated
 
 
 
