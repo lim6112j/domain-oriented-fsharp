@@ -1,5 +1,5 @@
 namespace OrderTracking.Domain
-
+open System
 [<Measure>]
 type kg
 [<Measure>]
@@ -7,6 +7,13 @@ type m
 type Result<'Success, 'Failure> =
   | OK  of 'Success
   | Error of 'Failure
+type Command<'data> = {
+  Data: 'data
+  Timestamp: DateTime
+  UserId: string
+}
+type UnvalidatedAddress = UnvalidatedAddress of string
+type ValidatedAddress = ValidatedAddress of string
 type UnitQuantity = private UnitQuantity of int
 module UnitQuantity =
   let create qty : Result<UnitQuantity, string>=
@@ -47,8 +54,15 @@ type Order = {
     OrderLines : NonEmptyList<OrderLine> // non empty list
     AmountToBill : BillingAmount
 }
-type UnvalidatedOrder = Undefined
-type ValidatedOrder = Undefined
+type UnvalidatedCustomerInfo = Undefined
+type UnvalidatedOrder = {
+  OrderId: string
+  CustomerInfo: UnvalidatedCustomerInfo
+  ShippingAddress : UnvalidatedAddress
+}
+type ValidatedOrder = {
+  ShippingAddress: ValidatedAddress
+}
 type AcknowledgmentSent = Undefined
 type OrderPlaced = Undefined
 type BillableOrderPlaced = Undefined
@@ -57,7 +71,6 @@ type PlaceOrderEvents = {
   OrderPlaced : OrderPlaced
   BillableOrderPlaced : BillableOrderPlaced
 }
-type PlaceOrder = UnvalidatedOrder -> PlaceOrderEvents
 type QuoteForm = Undefined
 type OrderForm = Undefined
 type CategorizedMail =
@@ -74,8 +87,6 @@ type ValidationError = {
   ErrorDescription : string
 }
 type ValidationResponse<'a> = Async<Result<'a, ValidationError list>>
-type ValidateOrder =
-  UnvalidatedOrder -> ValidationResponse<ValidatedOrder>
 type ContactId = ContactId of int
 type PhoneNumber = PhoneNumber of string
 type EmailAddress = EmailAddress of string
@@ -100,3 +111,21 @@ override this.Equals(obj) =
 override this.GetHashCode() =
   hash this.ContactId
 end
+type CheckProductCodeExists =
+  ProductCode -> bool
+type CheckedAddress = CheckedAddress of UnvalidatedAddress
+type AddressValidationError = AddressValidationError of string
+type CheckedAddressExists =
+  UnvalidatedAddress -> Result<CheckedAddress, AddressValidationError>
+type ValidateOrder =
+  CheckProductCodeExists
+    -> CheckedAddressExists
+    -> UnvalidatedOrder
+    -> Result<ValidatedOrder, ValidationError>
+
+//type PlaceOrder = {
+//  OrderForm: UnvalidatedOrder
+//  Timestamp: DateTime
+//  UserId: string
+//}
+type PlaceOrder = Command<UnvalidatedOrder>
