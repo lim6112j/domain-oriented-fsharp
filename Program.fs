@@ -51,6 +51,8 @@ module Program =
   let item = Item "item"
   let cartUpdated = Methods.addItem cart item
   printfn "cart added item : %A" cartUpdated
+  let cartPayment = Methods.makePayment cartUpdated 2.2
+  printfn "cart paid: %A" cartPayment
 
 
 
