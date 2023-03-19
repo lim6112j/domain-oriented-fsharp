@@ -47,21 +47,19 @@ type ShippingAddress = Undefined
 type BillingAddress = Undefined
 type OrderLine = Undefined
 type BillingAmount = Undefined
-type Order = {
-    CustomerInfo : CustomerInfo
-    ShippingAddress : ShippingAddress
-    BillingAddress : BillingAddress
-    OrderLines : NonEmptyList<OrderLine> // non empty list
-    AmountToBill : BillingAmount
-}
 type UnvalidatedCustomerInfo = Undefined
 type UnvalidatedOrder = {
   OrderId: string
   CustomerInfo: UnvalidatedCustomerInfo
   ShippingAddress : UnvalidatedAddress
 }
+type ValidatedOrderLine = Undefined
 type ValidatedOrder = {
+  OrderId: OrderId
+  CustomerInfo: CustomerInfo
   ShippingAddress: ValidatedAddress
+  BillingAddress: ValidatedAddress
+  OrderLines: ValidatedOrderLine list
 }
 type AcknowledgmentSent = Undefined
 type OrderPlaced = Undefined
@@ -129,3 +127,21 @@ type ValidateOrder =
 //  UserId: string
 //}
 type PlaceOrder = Command<UnvalidatedOrder>
+type ChangeOrder = Command<UnvalidatedOrder>
+type CancelOrder = Command<ValidatedOrder>
+type OrderTakingCommand =
+  | Place of PlaceOrder
+  | Change of ChangeOrder
+  | Cancel of CancelOrder
+type PricedOrderLine = Undefined
+type PricedOrder = {
+  OrderId: OrderId
+  CustomerInfo: CustomerInfo
+  ShippingAddress: ValidatedAddress
+  OrderLines: PricedOrderLine list
+  AmountToBill: BillingAmount
+}
+type Order = 
+  | Unvalidated of UnvalidatedOrder
+  | Validated of ValidatedOrder
+  | Priced of PricedOrder
