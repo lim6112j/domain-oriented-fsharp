@@ -12,6 +12,7 @@ type Command<'data> = {
   Timestamp: DateTime
   UserId: string
 }
+type Price = Price of int
 type UnvalidatedAddress = UnvalidatedAddress of string
 type ValidatedAddress = ValidatedAddress of string
 type UnitQuantity = private UnitQuantity of int
@@ -78,8 +79,8 @@ type CategorizedMail =
   type EnvelopeContents = Undefined
 type CategorizedInboundMail = EnvelopeContents -> CategorizedMail
 type ProductCatalog = Undefined
-type PriceOrder = Undefined
-type CalculatePrices = OrderForm -> ProductCatalog -> PriceOrder
+type GetProductPrice =
+  ProductCode -> Price
 type ValidationError = {
   FieldName : string
   ErrorDescription : string
@@ -120,7 +121,6 @@ type ValidateOrder =
     -> CheckedAddressExists
     -> UnvalidatedOrder
     -> Result<ValidatedOrder, ValidationError>
-
 //type PlaceOrder = {
 //  OrderForm: UnvalidatedOrder
 //  Timestamp: DateTime
@@ -141,6 +141,11 @@ type PricedOrder = {
   OrderLines: PricedOrderLine list
   AmountToBill: BillingAmount
 }
+type PriceOrder = 
+  GetProductPrice
+    -> ValidateOrder
+    -> PricedOrder
+type CalculatePrices = OrderForm -> ProductCatalog -> PriceOrder
 type Order = 
   | Unvalidated of UnvalidatedOrder
   | Validated of ValidatedOrder
@@ -165,3 +170,4 @@ module Methods =
     | EmptyCart -> cart
     | ActiveCart {UnpaidItems=existingItems} -> PaidCart {PaidItems = existingItems; Payment= payment}
     | PaidCart _ -> cart
+
