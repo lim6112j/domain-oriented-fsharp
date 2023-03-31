@@ -63,8 +63,28 @@ module Domain =
     OrderLines: ValidatedOrderLine list
   }
   type AcknowledgmentSent = Undefined
-  type OrderPlaced = Undefined
-  type BillableOrderPlaced = Undefined
+  type OrderPlaced = PricedOrder
+  type BillableOrderPlaced = {
+    OrderId : OrderId
+    BillingAddress : ValidatedAddress
+    AmountToBill : BillingAmount
+  }
+  type ContactId = ContactId of int
+  type PhoneNumber = PhoneNumber of string
+  type EmailAddress = EmailAddress of string
+  type OrderAcknowledgmentSent = {
+    OrderId : OrderId
+    EmailAddress : EmailAddress
+  }
+  type PlaceOrderResult = {
+    OrderPlaced : OrderPlaced
+    BillableOrderPlaced : BillableOrderPlaced
+    OrderAcknowledgmentSent : OrderAcknowledgmentSent option
+  }
+  type PlaceOrderEvent = 
+    | OrderPlaced of OrderPlaced
+    | BillableOrderPlaced of BillableOrderPlaced
+    | AcknowledgmentSent of OrderAcknowledgmentSent
   type PlaceOrderEvents = {
     AcknowledgmentSent : AcknowledgmentSent
     OrderPlaced : OrderPlaced
@@ -86,9 +106,6 @@ module Domain =
     ErrorDescription : string
   }
   type ValidationResponse<'a> = Async<Result<'a, ValidationError list>>
-  type ContactId = ContactId of int
-  type PhoneNumber = PhoneNumber of string
-  type EmailAddress = EmailAddress of string
   type BothContactMethods = {
     email: EmailAddress
     phone: PhoneNumber
@@ -114,11 +131,11 @@ module Domain =
     ProductCode -> bool
   type CheckedAddress = CheckedAddress of UnvalidatedAddress
   type AddressValidationError = AddressValidationError of string
-  type CheckedAddressExists =
+  type CheckAddressExists =
     UnvalidatedAddress -> Result<CheckedAddress, AddressValidationError>
   type ValidateOrder =
     CheckProductCodeExists
-      -> CheckedAddressExists
+      -> CheckAddressExists
       -> UnvalidatedOrder
       -> Result<ValidatedOrder, ValidationError>
   //type PlaceOrder = {
@@ -169,4 +186,20 @@ module Domain =
     | EmptyCart -> cart
     | ActiveCart {UnpaidItems=existingItems} -> PaidCart {PaidItems = existingItems; Payment= payment}
     | PaidCart _ -> cart
-
+  type HtmlString = HtmlString of string
+  type OrderAcknowledgment = {
+    EmailAddress : EmailAddress
+    Letter : HtmlString
+    }
+  type CreateOrderAcknowledgmentLetter =
+    PricedOrder -> HtmlString
+  type SendResult = Sent | NotSent
+  type SendOrderAcknowledgment =
+    OrderAcknowledgment -> SendResult
+  type AcknowledgmentOrder =
+    CreateOrderAcknowledgmentLetter // dependency
+      -> SendOrderAcknowledgment // dependency
+      -> PricedOrder // input
+      -> OrderAcknowledgmentSent option // output
+  type CreateEvents = 
+    PricedOrder -> PlaceOrderEvent list
