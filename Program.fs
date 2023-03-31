@@ -31,27 +31,27 @@ module Program =
   let initialContact = {ContactId=ContactId 42; ContactInfo=contactInfo};
   let updatedContact = {initialContact with ContactId = ContactId 41}
   printfn "initial : %A,\nupdated: %A" initialContact updatedContact
-  let unitQ = UnitQuantity.create 1
-  let unitQError = UnitQuantity.create 1001 
+  let unitQ = create 1
+  let unitQError = create 1001 
   match unitQ with
   | Error msg -> printfn "Failure, Message is %s" msg
   | OK uQty -> 
     printfn "Success, value is %A" uQty
-    let innervalue = UnitQuantity.value uQty
+    let innervalue = value uQty
     printfn "innervalue is %i" innervalue
 
   match unitQError with
   | Error msg -> printfn "Failure, Message is %s" msg
   | OK uQty -> 
     printfn "Success, value is %A" uQty
-    let innervalue = UnitQuantity.value uQty
+    let innervalue = value uQty
     printfn "innervalue is %i" innervalue
 
   let cart = EmptyCart
   let item = Item "item"
-  let cartUpdated = Methods.addItem cart item
+  let cartUpdated = addItem cart item
   printfn "cart added item : %A" cartUpdated
-  let cartPayment = Methods.makePayment cartUpdated 2.2
+  let cartPayment = makePayment cartUpdated 2.2
   printfn "cart paid: %A" cartPayment
 
 
